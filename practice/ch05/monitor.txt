@@ -1,0 +1,9 @@
+refusal analytics
+total 5   refused 0 (0.0%)   fallback served 0
+
+by category
+
+cost by model
+  claude-fable-5       $0.0058
+
+top refusal-triggering prompt prefixes

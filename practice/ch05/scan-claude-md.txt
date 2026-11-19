@@ -1,0 +1,7 @@
+
+..\CLAUDE.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+summary: 1 file(s) with findings, 1 total (0 error-severity)
+rc=0

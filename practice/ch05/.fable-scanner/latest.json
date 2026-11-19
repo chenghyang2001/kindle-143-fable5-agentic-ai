@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "ms": 3189.6620000043185,
+      "refused": false,
+      "category": null,
+      "output": "```python\ndef reverse_string(s):\n    return s[::-1]\n```",
+      "id": "code-simple",
+      "score": 1.0
+    },
+    {
+      "ms": 3092.4506000010297,
+      "refused": false,
+      "category": null,
+      "output": "20",
+      "id": "reason-plain",
+      "score": 1.0
+    },
+    {
+      "ms": 2766.038399990066,
+      "refused": false,
+      "category": null,
+      "output": "alpha bravo charlie",
+      "id": "instruction-follow",
+      "score": 1.0
+    },
+    {
+      "ms": 4913.9684999972815,
+      "refused": false,
+      "category": null,
+      "output": "A Bloom filter is optimized for fast, memory-efficient set membership tests, trading a small chance of false positives (but never false negatives) for drastically reduced space usage.",
+      "id": "knowledge",
+      "score": 1.0
+    },
+    {
+      "ms": 3919.259400005103,
+      "refused": false,
+      "category": null,
+      "output": "STATUS: OK\nTESTS: 4",
+      "id": "my-format",
+      "score": 1.0
+    }
+  ]
+}

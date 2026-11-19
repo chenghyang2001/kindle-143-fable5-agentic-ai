@@ -1,0 +1,7 @@
+
+..\ch05\fixed_prompt.v1.md
+     8  warn   OM-01  12+ enumerated behavior items suggests a skill written for a weaker model. Fable 5 follows a brief intent statement better than a long list.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+summary: 1 file(s) with findings, 1 total (0 error-severity)
+rc=0

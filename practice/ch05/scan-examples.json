@@ -1,0 +1,70 @@
+{
+  "fable_scanner\\examples\\agent_config.json": [
+    {
+      "rule": "MG-01",
+      "severity": "warn",
+      "line": 2,
+      "match": "claude-fable-5",
+      "why": "A claude-fable-5 call with no `fallbacks` dead-ends on refusal: HTTP 200, stop_reason=refusal, empty content, and nothing recovers it.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback"
+    },
+    {
+      "rule": "FS-02",
+      "severity": "warn",
+      "line": 4,
+      "match": "\"temperature\": 0.7",
+      "why": "temperature/top_p/top_k are not supported on Fable 5 -- the API returns 400.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/effort"
+    },
+    {
+      "rule": "FS-03",
+      "severity": "warn",
+      "line": 5,
+      "match": "\"thinking\": { \"type\": \"enabled\"",
+      "why": "Manual `thinking: {type: \"enabled\", budget_tokens: N}` is rejected on Fable 5. Thinking is always on; control depth with output_config.effort.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/effort"
+    }
+  ],
+  "fable_scanner\\examples\\bad_prompt.md": [
+    {
+      "rule": "OT-01",
+      "severity": "warn",
+      "line": 3,
+      "match": "IMPORTANT:",
+      "why": "IMPORTANT/CRITICAL/WARNING framing compensated for weaker instruction following on older models. Fable 5 gives the same weight to a plain sentence.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+    },
+    {
+      "rule": "RX-01",
+      "severity": "error",
+      "line": 3,
+      "match": "explain your reasoning",
+      "why": "Asking Fable 5 to echo its internal reasoning as response text is a documented `reasoning_extraction` refusal trigger. Use adaptive thinking instead of narrating it in the output.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+    },
+    {
+      "rule": "OM-01",
+      "severity": "warn",
+      "line": 8,
+      "match": "12 enumerated items",
+      "why": "12+ enumerated behavior items suggests a skill written for a weaker model. Fable 5 follows a brief intent statement better than a long list.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+    },
+    {
+      "rule": "OT-02",
+      "severity": "warn",
+      "line": 19,
+      "match": "YOU MUST NOT",
+      "why": "\"YOU MUST\" / \"YOU MUST NOT\" shouting. State the constraint plainly.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+    },
+    {
+      "rule": "FS-01",
+      "severity": "error",
+      "line": 21,
+      "match": "128000 tokens remaining",
+      "why": "Surfacing a remaining-token countdown makes Fable 5 wrap up early. Never show the model its own context budget.",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+  code-simple          ok                   3190ms  score=100%
+  reason-plain         ok                   3092ms  score=100%
+  instruction-follow   ok                   2766ms  score=100%
+  knowledge            ok                   4914ms  score=100%
+  my-format            ok                   3919ms  score=100%
+first run -- snapshot captured as baseline outcomes
+[run_with_cli] 本次共呼叫 claude -p 5 次

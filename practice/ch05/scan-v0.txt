@@ -1,0 +1,15 @@
+
+..\ch05\fixed_prompt.v0.md
+     3  warn   OT-01  IMPORTANT/CRITICAL/WARNING framing compensated for weaker instruction following on older models. Fable 5 gives the same weight to a plain sentence.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+     3  error  RX-01  Asking Fable 5 to echo its internal reasoning as response text is a documented `reasoning_extraction` refusal trigger. Use adaptive thinking instead of narrating it in the output.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+     8  warn   OM-01  12+ enumerated behavior items suggests a skill written for a weaker model. Fable 5 follows a brief intent statement better than a long list.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+    19  warn   OT-02  "YOU MUST" / "YOU MUST NOT" shouting. State the constraint plainly.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+    21  error  FS-01  Surfacing a remaining-token countdown makes Fable 5 wrap up early. Never show the model its own context budget.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+summary: 1 file(s) with findings, 5 total (2 error-severity)
+rc=1

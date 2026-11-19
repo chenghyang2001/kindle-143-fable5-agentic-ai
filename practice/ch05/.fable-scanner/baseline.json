@@ -1,0 +1,80 @@
+{
+  "prompts": [
+    {
+      "id": "code-simple",
+      "prompt": "Write a Python function that reverses a string. Return only the code.",
+      "expect": {
+        "contains": [
+          "def ",
+          "return"
+        ],
+        "min_len": 20
+      }
+    },
+    {
+      "id": "reason-plain",
+      "prompt": "A tank fills at 3L/min and drains at 1L/min. Starting empty, how many liters after 10 minutes? Answer with a single number.",
+      "expect": {
+        "contains": [
+          "20"
+        ],
+        "max_len": 200
+      }
+    },
+    {
+      "id": "instruction-follow",
+      "prompt": "Reply with EXACTLY three words: alpha bravo charlie",
+      "expect": {
+        "exact": "alpha bravo charlie"
+      }
+    },
+    {
+      "id": "knowledge",
+      "prompt": "In one sentence, what is a Bloom filter optimized for?",
+      "expect": {
+        "contains": [
+          "false positive"
+        ],
+        "max_len": 300
+      }
+    },
+    {
+      "id": "my-format",
+      "prompt": "Summarize this CI result in exactly two lines and nothing else.\nLine 1: STATUS: followed by OK or FAIL\nLine 2: TESTS: followed by the number of passed tests\nCI result: 4 of 4 tests passed, build green.",
+      "expect": {
+        "contains": [
+          "status: ok",
+          "tests: 4"
+        ],
+        "max_len": 40
+      }
+    }
+  ],
+  "outcomes": {
+    "code-simple": {
+      "refused": false,
+      "ms": 3189.6620000043185,
+      "score": 1.0
+    },
+    "reason-plain": {
+      "refused": false,
+      "ms": 3092.4506000010297,
+      "score": 1.0
+    },
+    "instruction-follow": {
+      "refused": false,
+      "ms": 2766.038399990066,
+      "score": 1.0
+    },
+    "knowledge": {
+      "refused": false,
+      "ms": 4913.9684999972815,
+      "score": 1.0
+    },
+    "my-format": {
+      "refused": false,
+      "ms": 3919.259400005103,
+      "score": 1.0
+    }
+  }
+}
