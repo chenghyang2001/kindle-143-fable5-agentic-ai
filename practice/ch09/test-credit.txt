@@ -1,0 +1,7 @@
+ok  (a) 第一次就成功：只呼叫 1 次，沒有帶 fallback_credit
+ok  (b) 拒答＋有 token：2 次呼叫；第二次只換了 model＋加了 fallback_credit（token＋has_prefill_claim=True），其餘欄位與順序一致
+ok  (c) 拒答＋沒有 token：仍然重試到 Opus，但沒有 fallback_credit（會重新寫快取）
+ok  (d) served_by_sticky：只有 fallback_message → True；兩者都有 → False；只有 message → False；iterations=None → False
+ok  (e) body_matches 抓到好心清洗：只換 model＋加 credit → body_matches=True；刪掉空字串 text 區塊 → False（assistant 區塊數 2 → 1）；附註：只改欄位順序時 body_matches=True，因為它比的是 dict 不是位元組
+
+5/5 通過（0 次模型呼叫）
