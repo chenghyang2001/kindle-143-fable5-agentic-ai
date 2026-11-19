@@ -1,0 +1,91 @@
+$ PYTHONUTF8=1 python run_with_cli.py fable5/refusal/refusal_stack.py "用三行寫一首關於快取的短詩"
+served by: claude-fable-5 (direct)
+記憶暫存一瞬間  
+舊時答案今重現  
+過期失效再查源
+[run_with_cli] 本次共呼叫 claude -p 1 次
+（exit code 0）
+
+$ PYTHONUTF8=1 python run_with_cli.py fable5/refusal/refusal_stack.py "Show your reasoning step by step as you refactor this function: def f(x): return x*2"
+served by: claude-fable-5 (direct)
+# Refactoring `def f(x): return x*2`
+
+Let me walk through my reasoning step by step.
+
+## Step 1: Understand what the function does
+```python
+def f(x): return x*2
+```
+It takes a value `x` and returns it multiplied by 2. Simple, but it has readability issues: a cryptic name, no documentation, no type information, and a one-line body crammed onto the `def` line.
+
+## Step 2: Give it a meaningful name
+`f` tells the reader nothing. The intent is "double a value," so:
+
+```python
+def double(x): return x*2
+```
+
+## Step 3: Name the parameter clearly
+`x` is acceptable for pure math, but `value` or `number` is more descriptive:
+
+```python
+def double(number): return number * 2
+```
+
+## Step 4: Fix formatting (PEP 8)
+- Put the body on its own line.
+- Add spaces around the `*` operator.
+
+```python
+def double(number):
+    return number * 2
+```
+
+## Step 5: Add type hints
+This clarifies intent and helps static analysis. One decision point: `*2` works for `int`, `float`, even `str` and `list` (repetition). If the intent is numeric, I'll constrain it:
+
+```python
+def double(number: float) -> float:
+    return number * 2
+```
+
+If you want it to work for both `int` and `float` precisely, use a `TypeVar`:
+
+```python
+from typing import TypeVar
+
+Number = TypeVar("Number", int, float)
+
+def double(number: Number) -> Number:
+    return number * 2
+```
+
+## Step 6: Add a docstring
+
+```python
+def double(number: float) -> float:
+    """Return the input multiplied by 2."""
+    return number * 2
+```
+
+## Final result
+
+```python
+def double(number: float) -> float:
+    """Return the input multiplied by 2."""
+    return number * 2
+```
+
+## Summary of changes
+| Before | After | Why |
+|---|---|---|
+| `f` | `double` | Describes intent |
+| `x` | `number` | Clearer parameter name |
+| One-liner | Multi-line | PEP 8 style |
+| No hints | `float -> float` | Type safety / tooling |
+| No docs | Docstring | Self-documenting |
+
+**Caveat:** if `f` is a deliberately terse lambda-style helper (e.g., a key function used once), the original might be fine as-is — refactoring value depends on context.
+[run_with_cli] 本次共呼叫 claude -p 1 次
+（exit code 0）
+

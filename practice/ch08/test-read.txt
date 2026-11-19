@@ -1,0 +1,6 @@
+ok  Fable 直接回答                   → text='快取命中省下一次往返'  provenance='claude-fable-5 (direct)'
+ok  備援接住                         → text='這是備援模型寫的答案'  provenance='claude-opus-4-8'
+ok  全部拒答＋類別                      → text=None  provenance='refused (category=cyber)'
+ok  全部拒答＋stop_details=None       → text=None  provenance='refused (category=None)'
+
+4/4 個情境通過；claude -p 呼叫次數：0

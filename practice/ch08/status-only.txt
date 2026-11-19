@@ -1,0 +1,14 @@
+Fable 直接回答（HTTP 200，stop_reason=end_turn，model=claude-fable-5）
+  content[0].text 版：回傳 '快取命中省下一次往返'
+  join 版          ：回傳 '快取命中省下一次往返'
+備援接住（HTTP 200，stop_reason=end_turn，model=claude-opus-4-8）
+  content[0].text 版：回傳 '這是備援模型寫的答案'
+  join 版          ：回傳 '這是備援模型寫的答案'
+  兩版都不知道是誰回答的
+全部拒答＋類別（HTTP 200，stop_reason=refusal，model=claude-opus-4-8）
+  content[0].text 版：當掉：IndexError: list index out of range
+  join 版          ：回傳 ''
+全部拒答＋stop_details=None（HTTP 200，stop_reason=refusal，model=claude-fable-5）
+  content[0].text 版：當掉：IndexError: list index out of range
+  join 版          ：回傳 ''
+
