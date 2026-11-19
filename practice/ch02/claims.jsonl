@@ -1,0 +1,1 @@
+{"claim": "Claude Code 的 Skill 是以資料夾形式存在，每個 Skill 資料夾內必須有一個 SKILL.md 檔案（含 YAML frontmatter 與 Markdown 指示），個人層級放在 ~/.claude/skills/、專案層級放在 .claude/skills/。", "source": "https://code.claude.com/docs/en/skills", "verdict": "confirmed"}

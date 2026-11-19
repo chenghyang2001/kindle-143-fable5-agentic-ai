@@ -1,0 +1,4 @@
+[escalate] alert A-1001
+[escalate] alert A-1002
+[stop] queue empty
+claude -p 呼叫次數：4

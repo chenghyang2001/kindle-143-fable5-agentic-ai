@@ -1,0 +1,44 @@
+[問題] Claude Code 的 Skills 和 MCP 伺服器各適合什麼情境？
+
+== 步驟 1：拆出的角度 ==
+  1. Claude Code Skills 功能定義、運作機制與適用場景
+  2. MCP (Model Context Protocol) 伺服器的架構、能力與典型使用案例
+  3. Skills 與 MCP 的官方比較與選擇指南（Anthropic 文件、部落格）
+  4. 開發者實戰經驗：何時用 Skills、何時用 MCP 的社群討論與案例分享
+  5. 兩者在 token 成本、維護複雜度、外部系統整合需求上的取捨分析
+
+== 步驟 2：搜尋第一個角度 ==
+  角度：Claude Code Skills 功能定義、運作機制與適用場景
+  拿到 5 條主張
+  - Claude Code 的 Skill 是以資料夾形式存在，每個 Skill 資料夾內必須有一個 SKILL.md 檔案（含 YAML frontmatter 與 Markdown 指示），個人層級放在 ~/.claude/skills/、專案層級放在 .claude/skills/。
+    來源：https://code.claude.com/docs/en/skills
+  - Claude Code 啟動時只將各 Skill 的名稱與描述（frontmatter）載入上下文，SKILL.md 完整內容採漸進式揭露（progressive disclosure），只有在該 Skill 被實際使用時才載入，以節省 token。
+    來源：https://mikhail.io/2025/10/claude-code-skills/
+  - Skill 可由 Claude 依任務相關性自動觸發，也可由使用者以斜線指令（/skill-name）手動呼叫，且 Skill 資料夾可附帶 scripts/ 等支援檔案供執行。
+    來源：https://code.claude.com/docs/en/skills
+  - Anthropic 官方定位：Skills 用來教 Claude「如何做事」（可重複的流程、公司特定的領域知識），而 MCP 用來提供對外部系統（如 Google Drive、Slack、GitHub、資料庫）的即時連線與資料存取，兩者互補而非互斥。
+    來源：https://claude.com/blog/skills-explained
+  - Claude Code 的 Skills 遵循跨工具的 Agent Skills 開放標準，並在其上擴充了呼叫控制（invocation control）、子代理執行與動態上下文注入等額外功能。
+    來源：https://code.claude.com/docs/en/skills
+
+== 步驟 3：三票驗證第一條主張 ==
+  主張：Claude Code 的 Skill 是以資料夾形式存在，每個 Skill 資料夾內必須有一個 SKILL.md 檔案（含 YAML frontmatter 與 Markdown 指示），個人層級放在 ~/.claude/skills/、專案層級放在 .claude/skills/。
+  來源：https://code.claude.com/docs/en/skills
+  投票者 1：SUPPORTED — The official docs confirm each skill is a folder with a SKILL.md containing YAML frontmatter and Markdown instructions, with personal skills at ~/.claude/skills/ and project skills at .claude/skills/ (my searches found no contradiction; the only nuance is that frontmatter fields are technically optional, which doesn't refute the claim's core structure).
+
+Sources: [Claude Code Skills docs](https://code.claude.com/docs/en/skills)
+  投票者 2：SUPPORTED — Claude Code 官方文件確認每個 Skill 是一個資料夾、內含 SKILL.md（YAML frontmatter + Markdown 指示），個人層級位於 `~/.claude/skills/<skill-name>/SKILL.md`、專案層級位於 `.claude/skills/<skill-name>/SKILL.md`。
+
+Sources: [Claude Code Skills docs](https://code.claude.com/docs/en/skills.md), [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills?m=1)
+  投票者 3：SUPPORTED — The official Claude Code docs confirm skills are folders each containing a SKILL.md file with YAML frontmatter plus Markdown instructions, with personal skills in `~/.claude/skills/<name>/SKILL.md` and project skills in `.claude/skills/<name>/SKILL.md`.
+
+Sources: [Claude Code Skills docs](https://code.claude.com/docs/en/skills)
+  結果：confirmed（已附加寫入 claims.jsonl）
+
+== 每次呼叫的 effort ==
+  1. effort=xhigh web_search=False task_budget=None
+  2. effort=medium web_search=True task_budget=30000
+  3. effort=low web_search=True task_budget=20000
+  4. effort=low web_search=True task_budget=20000
+  5. effort=low web_search=True task_budget=20000
+claude -p 呼叫次數：5
