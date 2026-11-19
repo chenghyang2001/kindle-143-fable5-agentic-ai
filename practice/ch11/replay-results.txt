@@ -1,0 +1,18 @@
+history.json：8 則訊息，區塊類型 {'thinking': 2, 'text': 3, 'tool_use': 1, 'tool_result': 1, 'redacted_thinking': 1}
+
+ok  1 同模型（fable → fable）：json.dumps 逐位元組相同，且是深拷貝
+ok  2 跨模型（fable → opus）：思考區塊歸零，區塊類型 {'text': 4, 'tool_use': 1, 'tool_result': 1}
+ok  3 兩次呼叫後原物件仍與讀入時逐位元組相同
+ok  4 tool_use 與 tool_result 原樣保留，toolu_01 仍然對得上
+ok  5 第 6 則（原本只有 redacted_thinking）→ 說明 text；訊息數 8，user／assistant 交替不變
+ok  6 非思考區塊逐字相同（第 4 則只移除空 thinking，第 8 則完全不變）
+ok  7 邊界：空歷史回空 list；非 list 拋 TypeError
+
+錯誤示範 well_meaning_cleanup(fable → fable)：逐位元組相同？False（thinking 區塊 2 → 1，長度 914 → 849 字元）
+
+migration_linter.lint()，model=claude-opus-4-8：
+  處理前：[('messages', 'warn'), ('messages', 'warn'), ('messages', 'warn')]
+  處理後：clean
+ok  8 處理前有 messages 警告，處理後消失
+
+全部通過
