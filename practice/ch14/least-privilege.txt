@@ -1,0 +1,8 @@
+$ PYTHONUTF8=1 python ch14/least_privilege.py
+[ALLOW] pick-poisoned.txt：lookup_order 在 support-agent 的允許清單 ['lookup_order', 'escalate_to_human'] 內
+        args={"order_id": "A123"}
+[ALLOW] pick-clean.txt：lookup_order 在 support-agent 的允許清單 ['lookup_order', 'escalate_to_human'] 內
+        args={"order_id": "A123"}
+
+2 份回答，擋下 0 份；自我檢查通過
+（exit code 0）
