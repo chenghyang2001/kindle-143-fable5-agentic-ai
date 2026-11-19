@@ -1,0 +1,29 @@
+$ cd fable5 && PYTHONUTF8=1 python mythos_scope/scope_gate.py ../ch06/bad-forbidden.json
+  error  allowed_actions
+         Forbidden action(s) cannot be approved here: exfiltration, public_poc
+
+1 finding(s), 1 blocking
+（exit code 1）
+
+$ cd fable5 && PYTHONUTF8=1 python mythos_scope/scope_gate.py ../ch06/bad-missing.json
+  error  glasswing_scope_id
+         Mythos workloads require this field before the run starts.
+  error  evidence_store
+         Mythos workloads require this field before the run starts.
+  error  human_patch_owner
+         Mythos workloads require this field before the run starts.
+  error  artifact_policy.private_store_required
+         Mythos artifacts must be stored in a private evidence store.
+
+4 finding(s), 4 blocking
+（exit code 1）
+
+$ cd fable5 && PYTHONUTF8=1 python mythos_scope/scope_gate.py ../ch06/fable-no-telemetry.json
+  warn   refusal_logging
+         Fable workloads should log stop_reason and stop_details.category.
+  warn   fallbacks
+         Fable workloads should define a refusal fallback path.
+
+2 finding(s), 0 blocking
+（exit code 0）
+

@@ -1,0 +1,14 @@
+$ cd fable5 && PYTHONUTF8=1 python mythos_scope/scope_gate.py mythos_scope/sample_mythos_scope.json
+clean: scope packet is ready
+（exit code 0）
+
+$ cd fable5 && PYTHONUTF8=1 python mythos_scope/scope_gate.py mythos_scope/sample_fable_scope.json
+clean: scope packet is ready
+（exit code 0）
+
+$ cd fable5 && PYTHONUTF8=1 python -m mythos_scope.test_scope_gate
+ok  test_valid_mythos_scope_packet_is_clean
+ok  test_mythos_requires_authorization_and_private_artifacts
+ok  test_fable_packet_warns_without_refusal_path
+all checks passed
+（exit code 0）

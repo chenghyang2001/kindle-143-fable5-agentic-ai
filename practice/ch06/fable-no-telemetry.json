@@ -1,0 +1,12 @@
+{
+  "model": "claude-fable-5",
+  "target_repositories": [
+    "internal/service-a"
+  ],
+  "allowed_actions": [
+    "inspect",
+    "patch",
+    "verify",
+    "report"
+  ]
+}

@@ -1,0 +1,31 @@
+
+skills\act-on-sufficiency\SKILL.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+skills\effort-router\SKILL.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+skills\evidence-bound-progress\SKILL.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+    14  warn   OM-01  12+ enumerated behavior items suggests a skill written for a weaker model. Fable 5 follows a brief intent statement better than a long list.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+skills\reader-first-summary\SKILL.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+skills\refusal-aware-calling\SKILL.md
+    18  error  RX-01  Asking Fable 5 to echo its internal reasoning as response text is a documented `reasoning_extraction` refusal trigger. Use adaptive thinking instead of narrating it in the output.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+    18  error  RX-02  "Think step by step" / "think out loud" asks the model to externalize thinking as output, another reasoning_extraction trigger.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+skills\verifier-subagent\SKILL.md
+     1  info   MG-02  Long-running agent prompts without a progress-audit line let Fable 5 fabricate status updates.
+        https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5
+
+summary: 6 file(s) with findings, 8 total (2 error-severity)
+rc=1

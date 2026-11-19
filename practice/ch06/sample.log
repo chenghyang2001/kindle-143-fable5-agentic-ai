@@ -1,0 +1,10 @@
+2026-11-19T08:00:01Z web-01 severity=3 user=alice login ok
+2026-11-19T08:00:05Z web-01 severity=5 user=bob password reset requested
+2026-11-19T08:01:10Z db-02 severity=7 user=svc-backup backup started
+2026-11-19T08:02:33Z web-02 severity=10 user=mallory impossible travel US-VA to SG
+2026-11-19T08:03:00Z vpn-01 severity=4 user=carol vpn connected
+2026-11-19T08:03:41Z web-01 severity=9 brute force from 203.0.113.14
+2026-11-19T08:04:12Z db-02 severity=2 user=dave query slow
+2026-11-19T08:05:00Z web-03 severity=6 user= session token reused
+2026-11-19T08:05:30Z vpn-01 severity=1 user=erin vpn disconnected
+2026-11-19T08:06:02Z web-02 severity=8 user=frank admin role granted

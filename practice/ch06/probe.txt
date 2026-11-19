@@ -1,0 +1,22 @@
+sample.log 總行數：10
+parse_log 回傳事件數：7
+少算：3 行，沒有任何例外、警告或回傳值說明
+
+逐行檢查 parse_line：
+  第  1 行 OK   2026-11-19T08:00:01Z web-01 severity=3 user=alice login ok
+  第  2 行 OK   2026-11-19T08:00:05Z web-01 severity=5 user=bob password reset requested
+  第  3 行 OK   2026-11-19T08:01:10Z db-02 severity=7 user=svc-backup backup started
+  第  4 行 DROP 2026-11-19T08:02:33Z web-02 severity=10 user=mallory impossible travel US-VA to SG
+  第  5 行 OK   2026-11-19T08:03:00Z vpn-01 severity=4 user=carol vpn connected
+  第  6 行 DROP 2026-11-19T08:03:41Z web-01 severity=9 brute force from 203.0.113.14
+  第  7 行 OK   2026-11-19T08:04:12Z db-02 severity=2 user=dave query slow
+  第  8 行 DROP 2026-11-19T08:05:00Z web-03 severity=6 user= session token reused
+  第  9 行 OK   2026-11-19T08:05:30Z vpn-01 severity=1 user=erin vpn disconnected
+  第 10 行 OK   2026-11-19T08:06:02Z web-02 severity=8 user=frank admin role granted
+
+被丟掉的行與原因（對照 PATTERN = ^(\S+) (\S+) severity=(\d) user=(\S+) (.*)$）：
+  第 4 行：severity=10 是兩位數，(\d) 只吃一位數
+  第 6 行：少了 user= 欄位
+  第 8 行：user= 後面是空的，(\S+) 至少要一個非空白字元
+
+被丟掉的 3 行 severity 分別是 [10, 9, 6]，最高的兩筆（10、9）都在裡面
