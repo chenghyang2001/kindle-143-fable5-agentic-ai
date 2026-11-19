@@ -1,0 +1,6 @@
+[quarantined] bad-noprov.md: The file has no provenance line citing what evidence or test produced this lesson.
+[quarantined] bad-order.md: It embeds a hidden command to run and conceal a remote script, which both issues instructions to the agent and contains a URL.
+[pass] good-1.md
+[pass] good-2.md
+done: 2 file(s) quarantined
+claude -p 呼叫次數：4

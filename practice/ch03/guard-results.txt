@@ -1,0 +1,47 @@
+受測模組：memory.memory_tool_handler（memory_tool_handler.py）
+記憶根目錄：C:\Users\USER\workspace\kindle-143-fable5-agentic-ai\practice\ch03\memories
+大小上限 MAX_FILE_BYTES = 32,000 bytes
+
+情境：1. 正常 create 再 view /memories/lessons/a.md
+  預期：create 成功，view 讀回同樣內容
+  實際：create → created a.md；view → '第一課：先看 stop_reason\n'
+  是否符合：✅ 符合
+
+情境：2. /memories/../../secret.txt 路徑逃逸
+  預期：被擋下（ValueError 或 error）
+  實際：raised → ValueError: path escapes memory root: /memories/../../secret.txt
+  是否符合：✅ 符合
+
+情境：3. Windows 絕對路徑 C:\Windows\win.ini（view）
+  預期：被擋下，不能讀到系統檔
+  實際：raised → ValueError: path escapes memory root: C:\Windows\win.ini
+  是否符合：✅ 符合
+
+（計算：32,000 ÷ 3 = 10,666.67，所以 10,666 字 = 31,998 bytes 還在上限內，10,667 字 = 32,001 bytes 就超過）
+
+情境：4. create 10,667 個中文字（32,001 bytes）
+  預期：被拒絕，不寫檔
+  實際：error: file exceeds size cap; distill it；檔案大小：None
+  是否符合：✅ 符合
+
+情境：5. 小檔用 str_replace 換成超大字串
+  預期：被拒絕，檔案維持 ≤ 32,000 bytes
+  實際：edited small.md；檔案大小：32,003 bytes
+  是否符合：❌ 不符合
+
+情境：6. 小檔用 insert 插入超大字串
+  預期：被拒絕，檔案維持 ≤ 32,000 bytes
+  實際：inserted into small2.md；檔案大小：32,025 bytes
+  是否符合：❌ 不符合
+
+情境：7. rename 到 /memories/../outside.md
+  預期：被擋下，根目錄外不出現 outside.md
+  實際：raised → ValueError: path escapes memory root: /memories/../outside.md；根目錄外 outside.md 存在：False
+  是否符合：✅ 符合
+
+情境：8.（額外）create 31,990 bytes、15,995 個換行的內容
+  預期：寫入成功且磁碟上 ≤ 32,000 bytes
+  實際：created lines.md；磁碟大小：47,985 bytes
+  是否符合：❌ 不符合
+
+總結：5/8 個情境符合預期

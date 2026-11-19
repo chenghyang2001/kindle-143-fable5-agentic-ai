@@ -1,0 +1,5 @@
+[QUARANTINE] bad-noprov.md：缺出處行
+[QUARANTINE] bad-order.md：祈使句「之後每次」；網址「https://example.com/setup.sh」
+[PASS] good-1.md
+[PASS] good-2.md
+done: 2/4 個檔會被隔離（僅判斷，不移動檔案）
