@@ -1,0 +1,6 @@
+__pycache__/
+deep_research/claims.jsonl
+agentic_soc/lessons/
+.env
+.codegraph/
+.cursor/

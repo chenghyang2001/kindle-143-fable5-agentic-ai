@@ -1,0 +1,20 @@
+# Python／執行期
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.claude/
+practice/**/.claude/
+# 範例執行期寫進 fable5/ 的檔案（練習應改寫到 chNN/）
+practice/fable5/agentic_soc/lessons/
+practice/fable5/deep_research/claims.jsonl
+practice/fable5/memory/memories/
+practice/fable5/.fable-scanner/
+# 機密
+.env
+# 當機殘留
+*.stackdump
+core
+*.core
+*.dmp
+.ruff_cache/
