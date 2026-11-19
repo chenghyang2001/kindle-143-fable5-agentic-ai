@@ -1,0 +1,18 @@
+ok  classify           → low    輸出只有一個標籤，沒有分支判斷（ch07 錯誤分類 3 token 就答對）
+ok  extract            → low    從固定格式抽欄位，答案已經在輸入裡
+ok  format             → low    純排版轉換，一句話就能說完的工作
+ok  summarize          → medium 要挑重點，但範圍是給定的文字，不需要外部推理
+ok  chat               → medium 一般問答，延遲使用者看得到
+ok  route              → medium 在已知選項裡挑一個，有少量判斷
+ok  migrate            → xhigh  單向門：改錯了很難回頭
+ok  audit              → xhigh  要找出沒人寫下來的風險，判斷最密集
+ok  novel-research     → xhigh  要拆題、找反例，沒有現成答案
+ok  grade              → low    驗證者只回 PASS／FAIL＋一句理由（ch02 triage verify 與 research_loop 三票都用 low），靠多票換可靠度
+ok  lint-explain       → low    掃描器已經給出規則代碼與行號，只要把它翻成白話（ch05 規則表）
+ok  write-report       → medium 要讀多份輸出、整理成給沒看過過程的人讀的報告，但事實都已經在檔案裡
+ok  memory-quarantine  → low    判斷一個檔是描述還是命令，第一行回 QUARANTINE／PASS（ch03 startup_scan 用 low）
+ok  routing-policy     → high   要權衡成本與品質、找錯路由（ch04 成本儀表板）；不是單向門，用預設 high 就好
+ok  scope-review       → xhigh  Mythos 式資安範圍審查：漏一個欄位就可能越界，屬於高風險判斷
+ok  未知／缺 kind／None／非 dict → high（沒有分類到的工作用 API 預設值，等有資料再調）
+
+15 種類型＋4 個邊界案例全部通過；分布：low 6、medium 4、high 1、xhigh 4、max 0

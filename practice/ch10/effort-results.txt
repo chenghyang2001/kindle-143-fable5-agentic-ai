@@ -1,0 +1,10 @@
+(a) er.run()：effort 由 effort_for() 決定
+  classify               effort=low    output_tokens=5
+  summarize              effort=medium output_tokens=220
+  audit                  effort=xhigh  output_tokens=462
+
+(b) 同一個 summarize 提示詞，直接指定 effort
+  summarize（直接指定）        effort=low    output_tokens=207  （回答 430 字元）
+  summarize（直接指定）        effort=xhigh  output_tokens=281  （回答 605 字元）
+
+claude -p 呼叫次數：5
