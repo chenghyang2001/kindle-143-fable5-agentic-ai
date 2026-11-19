@@ -1,0 +1,49 @@
+$ PYTHONUTF8=1 python ch16/drift_alert.py ch16/week1.jsonl ch16/week2.jsonl
+基準 ch16/week1.jsonl：總請求 200
+  cyber                      4 次   2.00%
+  bio                        0 次   0.00%
+  frontier_llm               0 次   0.00%
+  reasoning_extraction       2 次   1.00%
+  fallback_served            0 次   0.00%
+  refused_total              6 次   3.00%
+本週 ch16/week2.jsonl：總請求 1000
+  cyber                     20 次   2.00%
+  bio                        0 次   0.00%
+  frontier_llm               0 次   0.00%
+  reasoning_extraction      30 次   3.00%
+  fallback_served           15 次   1.50%
+  refused_total             50 次   5.00%
+
+(a) 天真版（次數 > 10）— 基準：無告警
+
+(a) 天真版（次數 > 10）— 本週：cyber 次數 20 > 10；reasoning_extraction 次數 30 > 10；fallback_served 次數 15 > 10；refused_total 次數 50 > 10
+
+(b) 比率版（+1 個百分點以上或 2 倍以上）：
+    reasoning_extraction 比率 1.00% → 3.00%（+2.00 個百分點，3.0 倍）
+    fallback_served 比率 0.00% → 1.50%（+1.50 個百分點，inf 倍）
+    refused_total 比率 3.00% → 5.00%（+2.00 個百分點，1.7 倍）
+（exit code 1）
+
+===== 真實紀錄：第 4 章（成本儀表板＋MCP 稽核）當基準、第 5 章金絲雀當本週 =====
+$ PYTHONUTF8=1 python ch16/drift_alert.py ch04/calls-02.jsonl,ch04/calls-03.jsonl ch05/canary-calls.jsonl
+基準 ch04/calls-02.jsonl,ch04/calls-03.jsonl：總請求 5
+  cyber                      0 次   0.00%
+  bio                        0 次   0.00%
+  frontier_llm               0 次   0.00%
+  reasoning_extraction       0 次   0.00%
+  fallback_served            0 次   0.00%
+  refused_total              0 次   0.00%
+本週 ch05/canary-calls.jsonl：總請求 5
+  cyber                      0 次   0.00%
+  bio                        0 次   0.00%
+  frontier_llm               0 次   0.00%
+  reasoning_extraction       0 次   0.00%
+  fallback_served            0 次   0.00%
+  refused_total              0 次   0.00%
+
+(a) 天真版（次數 > 10）— 基準：無告警
+
+(a) 天真版（次數 > 10）— 本週：無告警
+
+(b) 比率版（+1 個百分點以上或 2 倍以上）：無告警
+（exit code 0）
