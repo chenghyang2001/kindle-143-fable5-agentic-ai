@@ -1,0 +1,16 @@
+$ PYTHONUTF8=1 python ch07/ci_gate.py
+[PASS] 01-fixed.json
+[FAIL] 02-original-opus.json
+    error temperature
+    error top_p
+    error thinking.budget_tokens
+    warn  messages
+    warn  fallbacks
+    info  output_config.effort
+[FAIL] 03-top-k-only.json
+    error top_k
+[FAIL] 04-thinking-disabled.json
+    error thinking
+
+4 份請求，3 份有 error（會在 Fable 5 回 400）
+（exit code 1）

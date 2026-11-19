@@ -1,0 +1,12 @@
+{
+  "model": "claude-fable-5",
+  "max_tokens": 4096,
+  "output_config": { "effort": "medium" },
+  "fallbacks": [{ "model": "claude-opus-4-8" }],
+  "messages": [
+    { "role": "user", "content": "Summarize this incident report." },
+    { "role": "assistant", "content": [
+      { "type": "text", "text": "Here is the summary." }
+    ] }
+  ]
+}

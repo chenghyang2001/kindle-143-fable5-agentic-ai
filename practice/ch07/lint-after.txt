@@ -1,0 +1,3 @@
+$ cd fable5 && PYTHONUTF8=1 python migration/migration_linter.py ../ch07/fixed_request.json
+clean: this request is already Fable-5 valid
+（exit code 0）

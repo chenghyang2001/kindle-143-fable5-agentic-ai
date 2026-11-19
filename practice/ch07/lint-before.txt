@@ -1,0 +1,23 @@
+$ cd fable5 && PYTHONUTF8=1 python migration/migration_linter.py migration/sample_opus_request.json
+  error  temperature
+         temperature returns 400 on Fable 5. Remove it; adaptive thinking is always on and does not accept sampling params.
+  error  top_p
+         top_p returns 400 on Fable 5. Remove it; adaptive thinking is always on and does not accept sampling params.
+  error  thinking.budget_tokens
+         Manual budget_tokens is rejected. Use output_config.effort instead.
+  warn   messages
+         Assistant turn carries a thinking block. On a cross-model switch (incl. an Opus fallback) strip thinking/redacted_thinking unless an exact-body fallback-credit redemption requires otherwise.
+  warn   fallbacks
+         No fallbacks wired. A refusal is an HTTP 200 with empty content; add fallbacks + the server-side-fallback beta header.
+  info   output_config.effort
+         No effort set. Fable 5 defaults to 'high'; set it explicitly so a fleet-wide change is one edit, not many.
+
+6 finding(s), 3 that 400 on Fable 5
+（exit code 1）
+
+$ cd fable5 && PYTHONUTF8=1 python -m migration.test_migration_linter
+ok  test_flags_sampling_params_and_manual_thinking
+ok  test_flags_carried_thinking_block_on_assistant_turn
+ok  test_clean_request_has_no_errors
+all checks passed
+（exit code 0）

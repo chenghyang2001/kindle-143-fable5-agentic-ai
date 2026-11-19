@@ -1,0 +1,8 @@
+{
+  "model": "claude-fable-5",
+  "max_tokens": 1024,
+  "top_k": 40,
+  "output_config": { "effort": "low" },
+  "fallbacks": [{ "model": "claude-opus-4-8" }],
+  "messages": [{ "role": "user", "content": "Classify this ticket as bug, feature, or question." }]
+}
