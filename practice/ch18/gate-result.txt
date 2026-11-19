@@ -1,0 +1,19 @@
+$ PYTHONUTF8=1 python ch18/go_no_go.py
+部署：projects/07 客服退款代理（sample_agent）上線到正式流量
+model：claude-fable-5
+
+#   閘門                             結果    理由
+1   model_variant_documented       PASS  ch07/lint-after.txt
+2   retention_resolved             FAIL  value=False
+3   fable_refusal_path_wired       PASS  ch08/test-read.txt
+4   fallback_gap_handled           FAIL  value=False
+5   mythos_scope_packet_required   N/A   model 是 claude-fable-5，不適用 Mythos 閘門
+6   mythos_artifact_controls_on    N/A   model 是 claude-fable-5，不適用 Mythos 閘門
+7   memory_gate_on                 PASS  ch03/scan-output.txt
+8   mcp_least_privilege            FAIL  value=False
+9   injection_boundary_set         FAIL  value=False
+10  verifier_running               FAIL  value=False
+
+PASS 3、N/A 2、FAIL 5
+最終判定：NO-GO
+（exit code 1）

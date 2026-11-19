@@ -1,0 +1,56 @@
+{
+  "deployment": "projects/07 客服退款代理（sample_agent）上線到正式流量",
+  "model": "claude-fable-5",
+  "gates": {
+    "model_variant_documented": {
+      "value": true,
+      "evidence": "ch07/lint-after.txt",
+      "note": "部署清單明訂 claude-fable-5；ch07 證明 Fable 5 請求本體可以通過 migration_linter。ch18/calls.jsonl 也記錄了稽核實際用的模型。"
+    },
+    "retention_resolved": {
+      "value": false,
+      "evidence": "none",
+      "note": "整場演練沒有任何資料保留（含零資料保留）的簽核紀錄。"
+    },
+    "fable_refusal_path_wired": {
+      "value": true,
+      "evidence": "ch08/test-read.txt",
+      "note": "refusal_stack.read() 四種分支（直接回答、備援、拒答＋類別、拒答＋None）assert 通過。"
+    },
+    "fallback_gap_handled": {
+      "value": false,
+      "evidence": "ch15/second-pass.txt",
+      "note": "只補了批次 API 的第二輪；巢狀子呼叫的備援（ch14）只寫了建議，沒有實作，雲端端點也沒處理。"
+    },
+    "mythos_scope_packet_required": {
+      "value": "not_applicable",
+      "evidence": "ch06/gate-results.txt",
+      "note": "本部署是 claude-fable-5。ch06 證明 scope_gate 在 Mythos 工作包缺欄位時會擋下。"
+    },
+    "mythos_artifact_controls_on": {
+      "value": "not_applicable",
+      "evidence": "ch06/gate-results.txt",
+      "note": "本部署是 claude-fable-5。"
+    },
+    "memory_gate_on": {
+      "value": true,
+      "evidence": "ch03/scan-output.txt",
+      "note": "startup_scan 把 2 個不合格的記憶檔隔離。"
+    },
+    "mcp_least_privilege": {
+      "value": false,
+      "evidence": "ch14/scan.txt",
+      "note": "tools.json 三個工具 rate_limit 全是 null；ship-audit 指出 issue_refund 的上限只寫在提示詞、lookup_order 沒有綁定客戶。ch14 的允許清單也沒有涵蓋 issue_refund。"
+    },
+    "injection_boundary_set": {
+      "value": false,
+      "evidence": "ch13/injection-notes.md",
+      "note": "ch13 的邊界模組是另一個代理的；sample_agent/system_prompt.md 沒有任何不可信內容聲明，eval 也顯示會照客戶說法洩漏毛利。"
+    },
+    "verifier_running": {
+      "value": false,
+      "evidence": "none",
+      "note": "ch01/harness/VERIFY.md 只是規格，沒有任何驗證者在這個代理的流量上執行。"
+    }
+  }
+}
