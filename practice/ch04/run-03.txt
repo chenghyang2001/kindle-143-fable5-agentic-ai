@@ -1,0 +1,78 @@
+=== Week summary ===
+claude-fable-5: 7 calls, 38430 tokens, $0.76
+claude-sonnet-5: 3 calls, 28700 tokens, $0.12
+claude-haiku-4-5: 2 calls, 910 tokens, $0.00
+
+=== Routing policy ===
+# Model-Routing Policy
+
+**The one-sentence test:** if you can specify the task in one sentence with no branches or judgment calls, route it to the cheapest model that can do it.
+
+## Policy
+
+| Tier | Belongs there | Why |
+|---|---|---|
+| **Haiku 4.5** ($1/$5) | typo_fix, rename_variable, one_line_summary, log_triage, simple Slack Q&A | Mechanical, single-outcome edits and lookups. No branching; correctness is trivially checkable. Haiku already did `rename_variable` successfully this week — proof it's sufficient. |
+| **Sonnet 5** ($2/$10) | implement_diff, fix_one_test, mcp_audit_execute | Bounded code changes: some reasoning about context and side effects, but one clear goal and a verifiable end state (tests pass, diff applies). |
+| **Fable 5** ($10/$50) | threat_model, migration_plan | Genuinely open-ended: many branches, trade-offs, judgment about what *not* to do. The expensive model earns its keep here. |
+
+## Mis-routed tasks (all on Fable)
+
+*Caveat: no per-call token splits in the summary, so I'm using the Fable average: 38,430 tok / 7 calls ≈ 5,490 tok/call ≈ **$0.109/call**. Haiku is exactly 1/10 Fable's price, Sonnet 1/5.*
+
+| Task (currently Fable) | Move to | Est. cost now | Est. cost after | Savings |
+|---|---|---|---|---|
+| typo_fix | Haiku | $0.109 | $0.011 | **~$0.098** |
+| rename_variable | Haiku | $0.109 | $0.011 | **~$0.098** |
+| one_line_summary | Haiku | $0.109 | $0.011 | **~$0.098** |
+| answer_slack_question | Haiku (Sonnet if answers need codebase judgment) | $0.109 | $0.011 | **~$0.098** |
+| fix_one_test | Sonnet | $0.109 | $0.022 | **~$0.087** |
+
+**Total estimated weekly savings: ~$0.48 — about 63% of the $0.76 Fable spend**, with no quality risk: four of the five fail the one-sentence test in the *other* direction (they're fully specifiable in one sentence), and `rename_variable` was already demonstrated on Haiku this week.
+
+## Correctly routed
+- **threat_model, migration_plan on Fable** — multi-branch, judgment-heavy; keep.
+- **implement_diff ×2 on Sonnet** — right fit.
+- **mcp_audit_execute on Sonnet** — defensible; it's the one call where I'd consider routing *up* rather than down if the audit has security consequences, but it doesn't violate the cost rule.
+- **Both Haiku calls** — already optimal.
+
+**Headline pattern:** the mis-routing is almost entirely "trivial tasks on the flagship." 4 of 7 Fable calls were one-sentence tasks. A simple default of *Haiku-first, escalate only when the task description needs a 'depends on' clause* would have captured nearly all the savings.
+
+=== Enforcement report ===
+```
+$ routing-audit --week-of 2026-11-13 --weekly-to-monthly x4
+==========================================================
+  MODEL-ROUTING POLICY VIOLATIONS — WEEK ENDING 2026-11-19
+==========================================================
+
+Rate basis: Fable call avg $0.109 | Haiku $0.011 | Sonnet $0.022
+
+TASK                      CURRENT   SHOULD BE   WEEKLY SAV   MONTHLY SAV (x4)
+------------------------- --------- ----------- ------------ -----------------
+typo_fix                  Fable     Haiku 4.5    $0.098       $0.39
+rename_variable            Fable     Haiku 4.5    $0.098       $0.39
+one_line_summary           Fable     Haiku 4.5    $0.098       $0.39
+answer_slack_question      Fable     Haiku 4.5    $0.098       $0.39
+fix_one_test                Fable     Sonnet 5     $0.087       $0.35
+------------------------- --------- ----------- ------------ -----------------
+TOTAL                                                          $1.91/mo
+
+CORRECTLY ROUTED (no action):
+  threat_model, migration_plan        -> Fable 5   [open-ended, keep]
+  implement_diff (x2)                 -> Sonnet 5  [bounded, keep]
+  mcp_audit_execute                   -> Sonnet 5  [defensible, keep]
+  (2x already on Haiku)               -> Haiku 4.5 [optimal]
+
+STATUS: 5/7 Fable calls this week were mis-routed.
+NOTE: dollar amounts are small at current volume — the real signal is
+the *pattern*: 4 of 5 violations are one-sentence tasks sent to the
+flagship model. If volume scales 10–100x, this $1.91/mo becomes
+$19–$191/mo for identical waste. Fix the default now, not later.
+
+RECOMMENDATION:
+  Set Haiku as default route. Escalate to Sonnet only when the task
+  needs a "depends on / verify against tests" clause. Escalate to
+  Fable only when it needs a "trade-off / judgment call" clause.
+==========================================================
+```
+[run_with_cli] 本次共呼叫 claude -p 2 次

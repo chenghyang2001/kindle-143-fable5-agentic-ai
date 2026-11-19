@@ -1,0 +1,145 @@
+=== Connector inventory ===
+# MCP Server Risk Assessment
+
+| Name | Scopes | Auth Method | Days Since Last Use | Risk Score* |
+|---|---|---|---|---|
+| github | repo, workflow, admin:org | oauth | 2 | Medium (5) |
+| slack | chat:write, channels:read, admin | oauth | 1 | Medium (5) |
+| aws | s3:*, iam:*, ec2:* | env_var_key | 45 | **High (8)** |
+| notion | read, write | oauth | 120 | Medium (6) |
+| stripe-sandbox | read, write | env_var_key | 200 | **High (7)** |
+| old-jira-connector | admin | none | 300 | 🔴 **Critical (9)** |
+
+\*Naive scoring = Scope severity (1–3) + Auth weakness (1–3) + Staleness (1–3); max 9.
+- **Scope severity:** admin/wildcard scopes = 3, read+write = 2
+- **Auth weakness:** `oauth`=1, `env_var_key`=2, `none`=3
+- **Staleness:** <7 days=1, 7–60 days=2, >60 days=3
+
+## Key takeaways
+- **old-jira-connector** is the worst offender: admin scope, zero auth, untouched for ~10 months. Strong candidate for immediate revocation.
+- **aws** combines wildcard permissions across S3/IAM/EC2 with static key-based auth and over a month of inactivity — rotate or restrict the key, and tighten IAM scopes.
+- **stripe-sandbox** has been dormant for ~6.5 months with a static key — low real-world blast radius (sandbox), but still worth disabling if unused.
+- **github** and **slack** are actively used with OAuth, but both carry admin-level scopes (`admin:org`, `admin`) that are broader than likely needed — consider scoping down even though active use lowers the naive score.
+- **notion** is stale (4 months) but low-privilege (read/write, no admin) — moderate priority for review.
+
+=== Audit + consolidation plan ===
+# MCP Connector Audit & Consolidation Plan
+
+## 1. Least-Privilege Violations (scope > observed use)
+
+| Connector | Violation | Evidence |
+|---|---|---|
+| **old-jira-connector** | `admin` with **zero observed use in 300 days** — by definition, *every* grant exceeds observed use | 100% unused privilege |
+| **aws** | `iam:*` is the standout: an MCP agent almost never needs to mutate IAM. `s3:*` and `ec2:*` are wildcards covering delete/modify when use is likely read/list on a few buckets. 45 days idle means even the narrow use case is unproven | Wildcard × 3 services |
+| **github** | `admin:org` (org membership, teams, billing) is rarely exercised by agents; `workflow` lets a connector rewrite CI definitions — a privilege-escalation path (modify a workflow → exfiltrate repo secrets) | Active, but admin scope almost certainly unexercised |
+| **slack** | `admin` grants workspace-level user/channel management; observed agent use is almost certainly posting and reading (`chat:write`, `channels:read` already cover it) | Admin alongside sufficient narrow scopes |
+| **stripe-sandbox** | `write` on a connector unused for 200 days | Dormant write grant |
+| **notion** | Least offensive, but `write` unused for 120 days — drop to `read` or disable | Dormant write grant |
+
+**A flaw in the naive score worth flagging:** active use *lowers* staleness score, but an actively-used, broadly-scoped OAuth connector (github, slack) is the *best* live exfiltration channel for a prompt-injected agent — the token is warm and traffic blends into normal activity. Staleness reduces likelihood of legitimate need, not attacker value.
+
+## 2. Redundancy / Overlap
+
+- **old-jira-connector ↔ notion**: both serve project/task tracking. Jira is dead (300 days); if any tracking need remains, Notion covers it. Consolidate to one.
+- **github `workflow` ↔ slack notifications**: if `workflow` was granted for CI-status visibility, that's already achievable via Slack/webhooks — `workflow` write access is not needed for read-only CI awareness.
+- **stripe-sandbox**: no overlap, but no observed function either — redundant with *nothing*, i.e., pure liability.
+
+## 3. Exfiltration Risk (broad × stale × weak auth)
+
+| Rank | Connector | Why |
+|---|---|---|
+| 🔴 1 | **old-jira-connector** | Admin, **no auth at all**, 300 days stale. Anyone who can reach the endpoint has admin. This isn't a connector, it's an open door. |
+| 🔴 2 | **aws** | `iam:*` means a compromise is unbounded — attacker mints their own credentials and persists beyond the connector. Static env-var key (non-expiring, likely never rotated), 45 days idle. Real blast radius exceeds old-jira even though the score says otherwise. |
+| 🟠 3 | **github** (active!) | `repo` on OAuth = read/write **every private repo**; `workflow` = secrets exfil via CI edits. Live token, daily use = ideal covert channel. |
+| 🟠 4 | **slack** | `admin` + live token; `chat:write` to arbitrary channels is itself an exfil/social-engineering vector (impersonated messages). |
+| 🟡 5 | **stripe-sandbox** | Static key, 200 days stale — but sandbox limits blast radius to test data and reputational noise. |
+| 🟡 6 | **notion** | OAuth, no admin; stale write is the only issue. |
+
+## 4. Where Scope Trimming Isn't Enough → Per-Tool Policy Needed
+
+OAuth scopes are **area grants, not resource grants**. Three connectors need MCP-layer tool/resource policy even after trimming:
+
+- **github**: `repo` cannot be narrowed to specific repositories via scope. Required: allowlist of repos at the MCP tool layer (or switch to a GitHub App with per-repo installation), and deny-by-default on `create_or_update_file` / workflow-file paths.
+- **slack**: `chat:write` can't be scoped to channels. Required: per-tool policy restricting `post_message` to an approved channel allowlist; block DM-send tools entirely.
+- **aws**: wildcards must become resource-ARN-scoped IAM policy (the native equivalent of per-tool policy): specific buckets, no `iam:*` at all, read-only EC2 describe if needed.
+
+Notion similarly can't scope-restrict to specific pages — if retained, use Notion's per-page integration sharing as the policy layer.
+
+## 5. Ranked Consolidation Plan
+
+1. **Revoke `old-jira-connector` today.** No auth + admin + dead = kill, don't remediate. Audit access logs for its endpoint before deletion. Fold any residual tracking need into Notion.
+2. **Rebuild `aws` credentials this week.** Rotate the static key immediately (assume compromised after 45 idle days on env-var storage), replace with short-lived role-based creds (OIDC/STS), delete `iam:*`, and scope `s3`/`ec2` to named resources and read-level actions matching actual use.
+3. **Disable `stripe-sandbox`.** 200 days dormant; revoke the key. Re-provision fresh if a need resurfaces — cheaper than carrying it.
+4. **Trim `github`:** drop `admin:org`; drop `workflow` unless CI-editing is a confirmed use case. Then add per-repo allowlisting + write-path deny rules per §4. Highest-value *active* hardening.
+5. **Trim `slack`:** drop `admin` (the two narrow scopes cover observed use). Add channel allowlist policy per §4.
+6. **Downgrade `notion` to read-only** (or disable pending a use review at 150 days); restrict page sharing to the needed workspace sections.
+7. **Process fix:** auto-flag any connector at >90 days idle for scope-to-zero review, and ban `none`-auth and long-lived static keys as connector auth methods going forward — those two policies would have caught 3 of 6 entries here before they reached this table.
+
+**Net end state:** 3–4 connectors (github, slack, optionally notion read-only, rebuilt aws), all OAuth/short-lived creds, all with resource-level policy — down from 6 connectors, 3 of which carried admin/wildcard grants.
+
+=== Routing policy ===
+# MCP Connector Routing Policy
+
+**Effective:** 2026-11-19
+**Supersedes:** ad-hoc connector grants
+**Scope:** All MCP connectors in this workspace
+
+---
+
+## 1. Immediate Actions — Revoke Now
+
+| Connector | Action | Deadline | Notes |
+|---|---|---|---|
+| **old-jira-connector** | **Revoke** | Today | No auth + admin + 300d dead. Pull access logs for its endpoint before deletion (forensic baseline). Residual tracking need → route to Notion. |
+| **stripe-sandbox** | **Disable + revoke key** | Today | 200d dormant write grant. Static key, no overlap with any active function. Re-provision fresh if a real need emerges — cheaper than carrying it. |
+
+**Rule going forward:** any connector with `auth: none` or an admin scope + 0 observed use in its lookback window is revoked on discovery, not scheduled for review.
+
+---
+
+## 2. Scope-Down Now — Keep, but Rebuild/Trim
+
+| Connector | Current State | Target State | How |
+|---|---|---|---|
+| **aws** | `iam:*`, `s3:*`, `ec2:*`, static env-var key, 45d idle | Resource-scoped, read-biased, short-lived creds | 1) Rotate key immediately (treat as compromised after 45d idle on static storage). 2) Replace with OIDC/STS short-lived role credentials. 3) Delete `iam:*` entirely — no mutation-of-identity permission under any circumstance. 4) Scope `s3`/`ec2` to named resource ARNs matching actual observed buckets/instances; default to `Describe*`/`List*`/`Get*` actions only. |
+| **github** | `repo`, `admin:org`, `workflow`, OAuth, active daily use | Narrow, per-repo, no CI-write | 1) Drop `admin:org` — no observed org-admin use case. 2) Drop `workflow` unless a specific CI-editing use case is confirmed in writing by the owner. 3) Scope can't restrict to specific repos — add MCP-layer repo allowlist (or migrate to a GitHub App with per-repo installation). 4) Deny-by-default on `create_or_update_file` for workflow-file paths (`.github/workflows/**`). |
+| **slack** | `admin`, `chat:write`, `channels:read`, OAuth, active use | No admin, channel-restricted posting | 1) Drop `admin` — `chat:write` + `channels:read` already cover observed use. 2) Scope can't restrict to channels — add MCP-layer channel allowlist for `post_message`. 3) Block any DM-send tool entirely. |
+| **notion** | `write`, OAuth, 120d dormant write | Read-only | 1) Downgrade to `read` immediately. 2) Restrict integration's page sharing to only the workspace sections still in active use. 3) Re-evaluate at the 150-day mark (see §3) — if still unused, disable. |
+
+**Priority order for execution:** aws (credential rotation is urgent regardless of final policy) → github (highest-value active attack surface) → slack → notion.
+
+---
+
+## 3. Review Cadence for Remaining Connectors
+
+| Trigger | Action |
+|---|---|
+| **Any connector idle > 90 days** | Auto-flag for scope-to-zero review. Owner must justify retention in writing or it's disabled. |
+| **Any connector idle > 150 days (no justification filed)** | Auto-disable, require re-provisioning on demand rather than standing access. |
+| **Quarterly (every 90 days), all connectors** | Re-run this audit format: least-privilege check, redundancy check, exfiltration-risk ranking. |
+| **On any new connector request** | Must specify: auth type (OAuth/short-lived only — no static keys, no `none`), minimum scope for stated use case, and expected use frequency. Reject `none`-auth and long-lived static-key connectors by default; require explicit written exception. |
+| **On any scope increase request for an existing connector** | Treated as a new grant — requires same justification as a new connector, not a rubber-stamp. |
+
+**Review cadence for the post-remediation set:**
+- **github, slack:** monthly spot-check of tool-call logs against the allowlist (highest risk = active + broad, so tightest cadence).
+- **aws (rebuilt):** monthly review of STS role usage vs. granted resource ARNs.
+- **notion:** 30-day check-in; disable at 150 days total dormancy if `read` scope still shows zero use.
+
+---
+
+## 4. Standing Policy Rules (apply to all future connectors)
+
+1. No `auth: none` connectors permitted.
+2. No long-lived static keys for anything with write capability — short-lived/rotatable credentials only.
+3. No wildcard IAM-equivalent scopes (`iam:*`, `admin:org`, workspace `admin`) without a documented, reviewed, time-boxed exception.
+4. Where OAuth/IAM scopes are area-grants rather than resource-grants (github `repo`, slack `chat:write`, notion `write`, aws wildcards), an MCP-layer or native resource-level policy (allowlist/ARN-scoping/per-page sharing) is **mandatory**, not optional — scope trimming alone does not satisfy least privilege for these.
+5. Staleness lowers *likelihood of need*; it does not lower *attacker value* for active, broad-scope, OAuth-token connectors. Risk ranking must weight live+broad above stale+narrow, independent of the staleness score.
+
+---
+
+## 5. Target End State
+
+- **Connectors retained:** github, slack, notion (read-only), aws (rebuilt) — 4, down from 6.
+- **All retained connectors:** OAuth or short-lived creds only; zero admin/wildcard grants; resource-level policy enforced at MCP tool layer where native scoping can't reach.
+- **Connectors removed:** old-jira-connector, stripe-sandbox — 2 pure liabilities with no offsetting function.
+[run_with_cli] 本次共呼叫 claude -p 3 次

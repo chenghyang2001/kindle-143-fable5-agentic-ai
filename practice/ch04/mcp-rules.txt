@@ -1,0 +1,18 @@
+MCP 連接器規則稽核（6 個，來源 sample_mcp_servers.json）
+
+1. old-jira-connector：3/4 分  scopes=['admin'] auth=none last_used=300 天前
+     ✗ R1 scope 含 admin 或 *（admin）
+     ✗ R2 auth 為 none（auth=none）
+     ✗ R3 超過 90 天沒用（300 天）
+2. aws：2/4 分  scopes=['s3:*', 'iam:*', 'ec2:*'] auth=env_var_key last_used=45 天前
+     ✗ R1 scope 含 admin 或 *（s3:*, iam:*, ec2:*）
+     ✗ R4 金鑰放在環境變數（auth=env_var_key）
+3. stripe-sandbox：2/4 分  scopes=['read', 'write'] auth=env_var_key last_used=200 天前
+     ✗ R3 超過 90 天沒用（200 天）
+     ✗ R4 金鑰放在環境變數（auth=env_var_key）
+4. github：1/4 分  scopes=['repo', 'workflow', 'admin:org'] auth=oauth last_used=2 天前
+     ✗ R1 scope 含 admin 或 *（admin:org）
+5. notion：1/4 分  scopes=['read', 'write'] auth=oauth last_used=120 天前
+     ✗ R3 超過 90 天沒用（120 天）
+6. slack：1/4 分  scopes=['chat:write', 'channels:read', 'admin'] auth=oauth last_used=1 天前
+     ✗ R1 scope 含 admin 或 *（admin）
