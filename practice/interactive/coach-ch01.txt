@@ -19,3 +19,7 @@ K143 第 1 章互動演練：改變了什麼——Fable 5、Mythos 5 與 Harness
 【第 6 步：先看 stop_reason，再讀內容】
 第六步，先看 stop_reason，再讀內容。Fable 5 拒答時不會丟例外，而是回 HTTP 200，stop_reason 是 refusal，內容是空的。如果程式只讀內容，就會把空字串當成答案往下傳。書附的 refusal_stack 會先看 stop_reason，拒答就換備援模型重試。我們模擬三種回應：直接回答、Fable 拒答由備援接手、全部拒答。目的，是學會拒答是一種正常狀態，要在 Harness 裡處理。
 🆕 現況：先看 stop_reason 這條沒變。新的是備援可以直接寫 fallbacks 等於 default，伺服器會依拒答類別自己挑備援模型，不用自己維護清單。
+
+【第 7 步：effort 按任務分配思考力】
+第七步，effort，也就是給模型多少思考力。Fable 5 不再手動設 thinking 預算，而是用 effort 分級：low、medium、high、xhigh、max。書附的 effort 模組有一張分配表，依任務類型決定要用哪一級，例如快速分類給低，遷移、稽核這種要深想的給高。我們列出幾種任務，看各自分到哪一級。目的，是知道思考力是可以按任務配置的成本開關。
+🆕 現況：書附的分配表把遷移、稽核給 xhigh。到了 Fable 5.2，官方建議先從 high 開始，量得到品質提升才往上調，max 只在測上限時用。
