@@ -15,3 +15,7 @@ K143 第 1 章互動演練：改變了什麼——Fable 5、Mythos 5 與 Harness
 【第 5 步：API 請求也要遷移，送錯參數直接 400】
 第五步，不只提示詞，API 請求本身也要遷移。書附一份舊的 Opus 請求，帶了 temperature、top_p，還手動設了 thinking 預算。這些在 Fable 5 上不是被忽略，而是直接回 400 錯誤。我們用書附的 migration_linter 檢查這份請求，看它列出哪些欄位要拿掉、哪些建議補上。目的，是知道換模型時，程式碼裡的請求參數也要一起改。
 🆕 現況：書寫的是 Fable 5。從 5.1 開始又多一個會直接 400 的參數：強制呼叫工具，也就是 tool_choice 設成 any 或指定工具。現在要改用 auto，在提示詞點名工具，要格式保證就在工具加 strict。
+
+【第 6 步：先看 stop_reason，再讀內容】
+第六步，先看 stop_reason，再讀內容。Fable 5 拒答時不會丟例外，而是回 HTTP 200，stop_reason 是 refusal，內容是空的。如果程式只讀內容，就會把空字串當成答案往下傳。書附的 refusal_stack 會先看 stop_reason，拒答就換備援模型重試。我們模擬三種回應：直接回答、Fable 拒答由備援接手、全部拒答。目的，是學會拒答是一種正常狀態，要在 Harness 裡處理。
+🆕 現況：先看 stop_reason 這條沒變。新的是備援可以直接寫 fallbacks 等於 default，伺服器會依拒答類別自己挑備援模型，不用自己維護清單。
