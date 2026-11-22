@@ -294,6 +294,7 @@ sys.path.insert(0, "../ch18/interactive")
 import go_no_go as g
 work = Path("../ch18/interactive")
 text = (work / "ship-audit.txt").read_text(encoding="utf-8")
+text = text.split("=== Go/no-go audit ===", 1)[-1]  # 只看稽核段：前面的 Behavior contract summary 會重述失敗案例，整份比對會誤判「有提到」
 dep = json.loads((work / "deployment.json").read_text(encoding="utf-8"))
 rows = g.judge(dep)
 status = {r[0]: r[2] for r in rows}
